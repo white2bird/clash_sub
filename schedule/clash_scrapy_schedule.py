@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 
 def register_clash_schedule(scheduler: APScheduler, app: Flask):
-    @scheduler.task('cron', id='clash_schedule', hour=1)
+    @scheduler.task('cron', id='clash_schedule', minute="*/1")
     def initialize_scheduler():
         with app.app_context():
             logger.info("---start  crawl----")
@@ -23,20 +23,30 @@ def register_clash_schedule(scheduler: APScheduler, app: Flask):
             static_path = app.static_folder
             url_list = [_ for _ in clash_url_list]
 
-            clash_res = aggregate_clash_subscriptions(url_list)
-            if clash_res is None or len(clash_res) == 0:
-                return
-            logger.info("---clash success ---------")
-            with open(static_path + "/merged_clash.yaml", 'w', encoding="utf-8") as file:
-                with open(static_path + "/proxy_head.txt", 'r') as head_file:
-                    lines = head_file.readlines()
-                    for line in lines:
-                        file.write(line)
+            clash_res_mobile = aggregate_clash_subscriptions(url_list, type_mobile="mobile")
+            if clash_res_mobile and len(clash_res_mobile) > 0:
+                logger.info("---clash mobile success ---------")
 
-                yaml.dump(clash_res, file, default_flow_style=False, allow_unicode=True)
+                with open(static_path + "/merged_clash_mobile.yaml", 'w', encoding="utf-8") as file:
+                    with open(static_path + "/proxy_head.txt", 'r') as head_file:
+                        lines = head_file.readlines()
+                        for line in lines:
+                            file.write(line)
+                    yaml.dump(clash_res_mobile, file, default_flow_style=False, allow_unicode=True)
+
+            clash_res_cp = aggregate_clash_subscriptions(url_list, type_mobile="computer")
+            if clash_res_cp and len(clash_res_cp) > 0:
+                logger.info("---clash computer success ---------")
+
+                with open(static_path + "/merged_clash_computer.yaml", 'w', encoding="utf-8") as file:
+                    with open(static_path + "/proxy_head.txt", 'r') as head_file:
+                        lines = head_file.readlines()
+                        for line in lines:
+                            file.write(line)
+                    yaml.dump(clash_res_cp, file, default_flow_style=False, allow_unicode=True)
             logger.info("---clash success write into yaml text---------")
 
-    @scheduler.task('cron', id='clash_schedule_url_node_url', hour=1)
+    @scheduler.task('cron', id='clash_schedule_url_node_url', minute="*/2")
     def initialize_url1_scheduler():
         with app.app_context():
             nodefreeUrl = 'https://nodefree.org/'
@@ -58,7 +68,7 @@ def register_clash_schedule(scheduler: APScheduler, app: Flask):
                             Redis.zadd('clash_url', time.time(), section.string)
                             return
 
-    @scheduler.task('cron', id='clash_schedule_clash__url', hour=1)
+    @scheduler.task('cron', id='clash_schedule_clash__url', minute="*/2")
     def initial_url2_scheduler():
         with app.app_context():
             classnodeUrl = 'https://clashnode.com/'
