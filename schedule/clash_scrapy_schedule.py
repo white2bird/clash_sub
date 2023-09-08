@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 
 def register_clash_schedule(scheduler: APScheduler, app: Flask):
-    @scheduler.task('cron', id='clash_schedule', minute="*/1")
+    @scheduler.task('cron', id='clash_schedule', hour="*/1")
     def initialize_scheduler():
         with app.app_context():
             logger.info("---start  crawl----")
@@ -46,7 +46,7 @@ def register_clash_schedule(scheduler: APScheduler, app: Flask):
                     yaml.dump(clash_res_cp, file, default_flow_style=False, allow_unicode=True)
             logger.info("---clash success write into yaml text---------")
 
-    @scheduler.task('cron', id='clash_schedule_url_node_url', minute="*/2")
+    @scheduler.task('cron', id='clash_schedule_url_node_url', hour="*/1")
     def initialize_url1_scheduler():
         with app.app_context():
             nodefreeUrl = 'https://nodefree.org/'
@@ -68,7 +68,7 @@ def register_clash_schedule(scheduler: APScheduler, app: Flask):
                             Redis.zadd('clash_url', time.time(), section.string)
                             return
 
-    @scheduler.task('cron', id='clash_schedule_clash__url', minute="*/2")
+    @scheduler.task('cron', id='clash_schedule_clash__url', hour="*/1")
     def initial_url2_scheduler():
         with app.app_context():
             classnodeUrl = 'https://clashnode.com/'

@@ -1,0 +1,12 @@
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "register_login_schedule.<locals>.initialize_scheduler" to job store "default"
+INFO:apscheduler.scheduler:Added job "register_clash_schedule.<locals>.initialize_scheduler" to job store "default"
+INFO:apscheduler.scheduler:Added job "register_clash_schedule.<locals>.initialize_url1_scheduler" to job store "default"
+INFO:apscheduler.scheduler:Added job "register_clash_schedule.<locals>.initial_url2_scheduler" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
