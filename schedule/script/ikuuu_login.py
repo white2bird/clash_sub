@@ -87,7 +87,7 @@ def login(emails: list):
             rest_proportion_pattern_text = rest_proportion_pattern.findall(link_text)
             digit_pattern = re.compile('(\\d+.\\d+)')
             digit_pattern_res = digit_pattern.findall(rest_proportion_pattern_text[0])
-            send_feishu_notification(email + ':' + result['msg'] + ' 剩余流量:' + rest + '，使用:' + digit_pattern_res[-1] + '%', int(datetime.now().timestamp()),
+            send_feishu_notification(email + ':' + result['msg'] + ' 剩余流量:' + rest + '，剩余:' + digit_pattern_res[-1] + '%', int(datetime.now().timestamp()),
                                      session)
         except Exception as e:
             logger.error('签到失败email: ' + email, e)
