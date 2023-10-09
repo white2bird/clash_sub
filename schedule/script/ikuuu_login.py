@@ -81,7 +81,13 @@ def login(emails: list):
             result = json.loads(session.post(url=check_url, headers=header).text)
             link_text = session.get(link_url, headers=header).text
             rest = rest_pattern.findall(link_text)[0]
-            send_feishu_notification(email + ':' + result['msg'] + ' 剩余流量:' + rest, int(datetime.now().timestamp()),
+
+            rest_proportion_pattern = re.compile("trafficDountChat(.*)?'\n", re.S)
+
+            rest_proportion_pattern_text = rest_proportion_pattern.findall(link_text)
+            digit_pattern = re.compile('(\\d+.\\d+)')
+            digit_pattern_res = digit_pattern.findall(rest_proportion_pattern_text[0])
+            send_feishu_notification(email + ':' + result['msg'] + ' 剩余流量:' + rest + '，使用:' + digit_pattern_res[-1] + '%', int(datetime.now().timestamp()),
                                      session)
         except Exception as e:
             logger.error('签到失败email: ' + email, e)
