@@ -11,14 +11,14 @@ logger = logging.getLogger()
 FEISHU_WEBHOOK_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/35a2a23c-babc-4675-b792-d4d5cd3ab644'
 FEISHU_WEBHOOK_SECRET = 'M4dNCmLgViHdHa5VNyROUc'
 
-login_url = 'https://ikuuu.art/auth/login'
-check_url = 'https://ikuuu.art/user/checkin'
-info_url = 'https://ikuuu.art/user/profile'
-link_url = 'https://ikuuu.art/user'
+login_url = 'https://ikuuu.me/auth/login'
+check_url = 'https://ikuuu.me/user/checkin'
+info_url = 'https://ikuuu.me/user/profile'
+link_url = 'https://ikuuu.me/user'
 
 
 header = {
-    'origin': 'https://ikuuu.art',
+    'origin': 'https://ikuuu.me',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
 }
 # <span class="counter">31.11</span> GB
