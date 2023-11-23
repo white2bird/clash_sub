@@ -39,8 +39,7 @@ def aggregate_clash_subscriptions(subscription_links, type_mobile="mobile"):
 
     for link in subscription_links:
         url_res = requests.get(link, headers=headers)
-        no_else_text = url_res.text.replace('!<str>', '')
-
+        no_else_text = url_res.text.replace('!<str>', '').replace('?', 'a')
         subscription_config = None
         new_proxies_list = []
         try:
