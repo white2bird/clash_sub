@@ -3,3 +3,5 @@
 app
 logs
 .idea
+**/*.txt
+**/*.yaml
