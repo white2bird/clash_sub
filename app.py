@@ -44,13 +44,11 @@ def heart():
     return {'status': 200, 'msg': None if test_value is None else test_value}
 
 
-@app.route('/msg')
+@app.route('/msg', methods="post")
 def feishu_msg():
     logger.info("---- get request --- ")
-    logger.info(request.__dict__)
-    res = request.args.get("CHALLENGE")
-    res = request.data["CHALLENGE"] if res is None else res
-    return {'status': 200, 'data': res}
+    res = request.json.get("challenge")
+    return {'status': 200, 'challenge': res}
 
 
 @app.route('/getRedisUrl')
