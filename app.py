@@ -50,7 +50,7 @@ def feishu_msg():
     logger.info(request.__dict__)
     res = request.args.get("CHALLENGE")
     res = request.data["CHALLENGE"] if res is None else res
-    return res
+    return {'status': 200, 'data': res}
 
 
 @app.route('/getRedisUrl')
