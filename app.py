@@ -48,12 +48,14 @@ def heart():
 def feishu_msg():
     logger.info("---- get request --- ")
     logger.info(request.__dict__)
-    return {'status': 200, 'msg': 'success'}
+    res = request.args.get("CHALLENGE")
+    res = request.data["CHALLENGE"] if res is None else res
+    return res
 
 
 @app.route('/getRedisUrl')
 def get_redis_url():
-    return {'status':200, 'msg':app.config['SESSION_REDIS']}
+    return {'status': 200, 'msg': app.config['SESSION_REDIS']}
 
 
 if __name__ == '__main__':
