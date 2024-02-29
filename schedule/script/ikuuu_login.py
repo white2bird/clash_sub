@@ -11,10 +11,10 @@ logger = logging.getLogger()
 FEISHU_WEBHOOK_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/35a2a23c-babc-4675-b792-d4d5cd3ab644'
 FEISHU_WEBHOOK_SECRET = 'M4dNCmLgViHdHa5VNyROUc'
 
-login_url = 'https://ikuuu.me/auth/login'
-check_url = 'https://ikuuu.me/user/checkin'
-info_url = 'https://ikuuu.me/user/profile'
-link_url = 'https://ikuuu.me/user'
+login_url = 'https://ikuuu.{}/auth/login'
+check_url = 'https://ikuuu.{}/user/checkin'
+info_url = 'https://ikuuu.{}/user/profile'
+link_url = 'https://ikuuu.{}/user'
 
 
 header = {
@@ -24,6 +24,7 @@ header = {
 # <span class="counter">31.11</span> GB
 pattern = re.compile('oneclickImport\((.*)\)')
 rest_pattern = re.compile('<span class="counter">(.*)</span> GB')
+use_pattern = re.compile(r"(.*?),")
 
 
 def gen_sign(secret, timestamp):
@@ -58,7 +59,7 @@ def send_feishu_notification(message, timestamp, session: Session):
         print('发送飞书通知出错')
 
 
-def login(emails: list):
+def login(emails: list, domain: str):
     for emailInfo in emails:
         if emailInfo is None:
             continue
@@ -77,31 +78,43 @@ def login(emails: list):
             logger.info('email: '+email+' start login')
 
             session = requests.session()
-            response = json.loads(session.post(url=login_url, headers=header, data=data).text)
-            result = json.loads(session.post(url=check_url, headers=header).text)
-            link_text = session.get(link_url, headers=header).text
+            pre_get_text = session.get(url=login_url.format(domain), headers=header).text
+            if "new domain" in pre_get_text:
+                dm_pattern = re.compile(r"https://ikuuu.(.*?)/", re.S)
+                dm_list = dm_pattern.findall(pre_get_text)
+                return dm_list[0]
+            login_res = session.post(url=login_url.format(domain), headers=header, data=data).text
+            response = json.loads(login_res)
+            result = json.loads(session.post(url=check_url.format(domain), headers=header).text)
+            link_text = session.get(link_url.format(domain), headers=header).text
             rest = rest_pattern.findall(link_text)[0]
 
             rest_proportion_pattern = re.compile("trafficDountChat(.*)?'\n", re.S)
 
             rest_proportion_pattern_text = rest_proportion_pattern.findall(link_text)
-            digit_pattern = re.compile('(\\d+.\\d+)')
+            digit_pattern = re.compile(r'(\d+.*\d*)')
             digit_pattern_res = digit_pattern.findall(rest_proportion_pattern_text[0])
-            send_feishu_notification(email + ':' + result['msg'] + ' 剩余流量:' + rest + '，剩余:' + digit_pattern_res[-1] + '%', int(datetime.now().timestamp()),
+            use_list = use_pattern.findall(rest_proportion_pattern_text[0])
+            send_feishu_notification(email + ':' + result['msg'] + ' 使用了' + str(use_list[0]).strip() + ' 剩余流量:' + rest + '，剩余:' + digit_pattern_res[5] + '%', int(datetime.now().timestamp()),
                                      session)
         except Exception as e:
             logger.error('签到失败email: ' + email, e)
+            send_feishu_notification(
+                "签到失败:" + email + "," + e.__str__(),
+                int(datetime.now().timestamp()),
+                requests.session())
+            return
         finally:
             if session:
                 session.close()
 
 
 if __name__ == '__main__':
-    pass
-    # for eminfo in list_emails:
-    #     lst = [_ for _ in eminfo.values()]
-    #     res = ','.join(lst)
-    #     print('zadd emails 0 '+res)
+    url = 'https://ikuuu.{}/auth/login'
+    info = """'(\n        \'1020.51MB\',\n        \'0B\',\n        \'87.23GB\',\n        \'1.13\',\n        \'0.00\',\n        \'98.87\'\n    )\n\n    $(\'.counter\').counterUp({\n        delay: 10,\n        time: 1000\n    });\n\n    function importSublink(client) {\n        if (client === \'quantumult\') {\n"""
+    use_pattern = re.compile(r"(.*?),")
+    res = use_pattern.findall(info)
+    print(str(res[0]).strip())
 
 
 

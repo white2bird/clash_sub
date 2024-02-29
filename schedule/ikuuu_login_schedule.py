@@ -18,5 +18,11 @@ def register_login_schedule(scheduler: APScheduler, app: Flask):
 
             if emails is None or len(emails) == 0:
                 return
-            login(emails)
+            domain = Redis.read("domain")
+            domain = "me" if not domain else domain
+            new_domain = login(emails, domain)
+            # 域名更改再次进行登陆
+            if new_domain is not None:
+                Redis.write("domain", new_domain)
+                login(emails, new_domain)
             logger.info("logging success")

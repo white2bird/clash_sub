@@ -44,7 +44,7 @@ def heart():
     return {'status': 200, 'msg': None if test_value is None else test_value}
 
 
-@app.route('/msg', methods="post")
+@app.route('/msg', methods=["post"])
 def feishu_msg():
     logger.info("---- get request --- ")
     res = request.json.get("challenge")
